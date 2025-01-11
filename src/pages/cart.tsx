@@ -6,8 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 import { TrashIcon } from '@heroicons/react/24/outline';
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity } = useCart();
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const { items, removeItem, updateQuantity, total } = useCart();
 
   if (items.length === 0) {
     return (

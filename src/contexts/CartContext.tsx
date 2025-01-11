@@ -21,6 +21,7 @@ type Product = {
 type CartContextType = {
   items: CartItem[];
   itemsCount: number;
+  total: number;
   addItem: (product: Product, quantity: number) => void;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
@@ -37,6 +38,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Calcular total de itens
   const itemsCount = items.reduce((total, item) => total + item.quantity, 0);
+  
+  // Calcular valor total
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // Carregar carrinho do localStorage quando iniciar
   useEffect(() => {
@@ -100,6 +104,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     <CartContext.Provider value={{
       items,
       itemsCount,
+      total,
       addItem,
       removeItem,
       updateQuantity,
