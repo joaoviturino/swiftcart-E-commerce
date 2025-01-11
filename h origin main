@@ -1,0 +1,40 @@
+[33mcommit a311fcd2f8a0b795b84909d21e350fa9541a07fc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: joaoviturino <joaoviturino.pessoal@gmail.com>
+Date:   Sat Jan 11 19:15:46 2025 -0300
+
+    Corrige tipos na chamada da função executeQuery
+
+[1mdiff --git a/src/pages/api/categories/[slug]/products.ts b/src/pages/api/categories/[slug]/products.ts[m
+[1mindex e7b18e5..1666f1c 100644[m
+[1m--- a/src/pages/api/categories/[slug]/products.ts[m
+[1m+++ b/src/pages/api/categories/[slug]/products.ts[m
+[36m@@ -16,10 +16,10 @@[m [mexport default async function handler(req: NextApiRequest, res: NextApiResponse)[m
+       const { slug } = req.query;[m
+ [m
+       // Primeiro, buscar a categoria[m
+[31m-      const categories = await executeQuery<any[]>({[m
+[31m-        query: 'SELECT * FROM categories WHERE slug = ?',[m
+[31m-        values: [slug][m
+[31m-      });[m
+[32m+[m[32m      const categories = await executeQuery<any[]>([m
+[32m+[m[32m        'SELECT * FROM categories WHERE slug = ?',[m
+[32m+[m[32m        [slug][m
+[32m+[m[32m      );[m
+ [m
+       if (categories.length === 0) {[m
+         return res.status(404).json({ error: 'Category not found' });[m
+[36m@@ -28,10 +28,10 @@[m [mexport default async function handler(req: NextApiRequest, res: NextApiResponse)[m
+       const category = categories[0];[m
+ [m
+       // Depois, buscar os produtos da categoria[m
+[31m-      const products = await executeQuery<Product[]>({[m
+[31m-        query: 'SELECT * FROM products WHERE category_id = ?',[m
+[31m-        values: [category.id][m
+[31m-      });[m
+[32m+[m[32m      const products = await executeQuery<Product[]>([m
+[32m+[m[32m        'SELECT * FROM products WHERE category_id = ?',[m
+[32m+[m[32m        [category.id][m
+[32m+[m[32m      );[m
+ [m
+       res.status(200).json({[m
+         categoryName: category.name,[m

@@ -1,0 +1,5 @@
+[33ma311fcd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Corrige tipos na chamada da função executeQuery
+[33m9778894[m Adiciona itemsCount ao CartContext para corrigir erro de tipo
+[33mdaeb852[m Resolve conflitos no README.md
+[33m8c740dd[m Adiciona LICENSE e atualiza README
+[33me6bb42d[m Adiciona licença MIT
