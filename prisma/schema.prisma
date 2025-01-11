@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  slug      String    @db.VarChar(100)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id            Int         @id @default(autoincrement())
+  name          String      @db.VarChar(255)
+  description   String?     @db.Text
+  price         Decimal     @db.Decimal(10, 2)
+  stockQuantity Int         @default(0) @map("stock_quantity")
+  categoryId    Int         @map("category_id")
+  imageUrl      String?     @db.VarChar(255) @map("image_url")
+  slug          String      @db.VarChar(255)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  category      Category    @relation(fields: [categoryId], references: [id])
+  orderItems    OrderItem[]
+
+  @@map("products")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  address   String?  @db.Text
+  phone     String?  @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  userId          Int         @map("user_id")
+  totalAmount     Decimal     @map("total_amount") @db.Decimal(10, 2)
+  status          OrderStatus @default(pending)
+  shippingAddress String      @map("shipping_address") @db.Text
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  user            User        @relation(fields: [userId], references: [id])
+  orderItems      OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          Int      @id @default(autoincrement())
+  orderId     Int      @map("order_id")
+  productId   Int      @map("product_id")
+  quantity    Int
+  priceAtTime Decimal  @map("price_at_time") @db.Decimal(10, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+  order       Order    @relation(fields: [orderId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+enum OrderStatus {
+  pending
+  processing
+  completed
+  cancelled
+} 
