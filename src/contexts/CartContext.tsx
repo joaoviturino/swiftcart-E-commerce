@@ -20,6 +20,7 @@ type Product = {
 // Tipo do contexto do carrinho
 type CartContextType = {
   items: CartItem[];
+  itemsCount: number;
   addItem: (product: Product, quantity: number) => void;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
@@ -33,6 +34,9 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   // Estado dos itens do carrinho
   const [items, setItems] = useState<CartItem[]>([]);
+
+  // Calcular total de itens
+  const itemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
   // Carregar carrinho do localStorage quando iniciar
   useEffect(() => {
@@ -95,6 +99,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   return (
     <CartContext.Provider value={{
       items,
+      itemsCount,
       addItem,
       removeItem,
       updateQuantity,
