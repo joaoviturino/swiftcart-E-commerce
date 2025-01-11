@@ -61,7 +61,6 @@ export default function SearchPage() {
                 key={product.id}
                 id={product.id}
                 name={product.name}
-                description={product.description}
                 price={Number(product.price)}
                 imageUrl={product.image_url}
                 slug={product.slug}
