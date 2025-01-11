@@ -5,7 +5,8 @@ import { useCart } from '@/contexts/CartContext';
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { itemsCount } = useCart();
+  const { items } = useCart();
+  const itemsCount = items.reduce((total, item) => total + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +20,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-2xl font-bold text-gray-800">
-            E-Commerce
+            SwiftCart
           </Link>
 
           <form onSubmit={handleSearch} className="flex-1 max-w-2xl mx-8">
