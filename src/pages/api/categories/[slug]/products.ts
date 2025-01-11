@@ -16,10 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { slug } = req.query;
 
       // Primeiro, buscar a categoria
-      const categories = await executeQuery<any[]>({
-        query: 'SELECT * FROM categories WHERE slug = ?',
-        values: [slug]
-      });
+      const categories = await executeQuery<any[]>(
+        'SELECT * FROM categories WHERE slug = ?',
+        [slug]
+      );
 
       if (categories.length === 0) {
         return res.status(404).json({ error: 'Category not found' });
@@ -28,10 +28,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const category = categories[0];
 
       // Depois, buscar os produtos da categoria
-      const products = await executeQuery<Product[]>({
-        query: 'SELECT * FROM products WHERE category_id = ?',
-        values: [category.id]
-      });
+      const products = await executeQuery<Product[]>(
+        'SELECT * FROM products WHERE category_id = ?',
+        [category.id]
+      );
 
       res.status(200).json({
         categoryName: category.name,
