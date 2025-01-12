@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { executeQuery } from '@/lib/db';
+import prisma from '@/lib/db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -9,23 +9,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { slug } = req.query;
 
   try {
-    const query = `
-      SELECT p.*, c.name as category_name 
-      FROM products p
-      LEFT JOIN categories c ON p.category_id = c.id
-      WHERE p.slug = ?
-    `;
-    
-    const results = await executeQuery(query, [slug]);
-    
-    if (!results || !Array.isArray(results) || results.length === 0) {
-      return res.status(404).json({ message: 'Product not found' });
+    const product = await prisma.product.findFirst({
+      where: {
+        slug: String(slug)
+      },
+      include: {
+        category: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
+
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
     }
 
-    const product = results[0];
-    res.status(200).json(product);
+    // Formatar a resposta
+    const response = {
+      ...product,
+      category_name: product.category.name
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching product:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ error: 'Error fetching product' });
   }
 } 
