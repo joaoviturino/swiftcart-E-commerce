@@ -3,10 +3,10 @@ import { PrismaClient, Prisma } from '@prisma/client';
 // Para logs mais detalhados em produção
 const prismaClientConfig = {
   log: [
-    { level: 'query' as const },
-    { level: 'error' as const },
-    { level: 'info' as const },
-    { level: 'warn' as const }
+    { emit: 'stdout', level: 'query' as const },
+    { emit: 'stdout', level: 'error' as const },
+    { emit: 'stdout', level: 'info' as const },
+    { emit: 'stdout', level: 'warn' as const }
   ],
 };
 
