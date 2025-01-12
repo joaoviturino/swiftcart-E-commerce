@@ -7,6 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    // Tenta conectar ao banco de dados primeiro
+    await prisma.$connect();
+    console.log('Database connection successful');
+
     const products = await prisma.product.findMany({
       include: {
         category: {
@@ -20,14 +24,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
 
+    console.log(`Found ${products.length} products`);
+
     const formattedProducts = products.map(product => ({
       ...product,
       category_name: product.category.name
     }));
 
-    res.status(200).json(formattedProducts);
+    return res.status(200).json(formattedProducts);
   } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ error: 'Error fetching products' });
+    console.error('Detailed error in /api/products:', error);
+    
+    // Verifica se é um erro do Prisma
+    if (error.code) {
+      return res.status(500).json({ 
+        error: 'Database error', 
+        code: error.code,
+        message: error.message 
+      });
+    }
+
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message
+    });
+  } finally {
+    // Desconecta do banco de dados
+    await prisma.$disconnect();
   }
 } 
