@@ -1,24 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 // Para logs mais detalhados em produção
 const prismaClientConfig = {
   log: [
-    {
-      emit: 'event',
-      level: 'query',
-    },
-    {
-      emit: 'event',
-      level: 'error',
-    },
-    {
-      emit: 'event',
-      level: 'info',
-    },
-    {
-      emit: 'stdout',
-      level: 'warn',
-    },
+    { level: 'query' as const },
+    { level: 'error' as const },
+    { level: 'info' as const },
+    { level: 'warn' as const }
   ],
 };
 
@@ -32,22 +20,6 @@ if (process.env.NODE_ENV === 'production') {
   }
   prisma = (global as any).prisma;
 }
-
-// Configurar listeners de eventos
-prisma.$on('query', (e) => {
-  console.log('Query: ' + e.query);
-  console.log('Params: ' + e.params);
-  console.log('Duration: ' + e.duration + 'ms');
-});
-
-prisma.$on('error', (e) => {
-  console.error('Prisma Error:', e.message);
-  console.error('Target:', e.target);
-});
-
-prisma.$on('info', (e) => {
-  console.log('Prisma Info:', e.message);
-});
 
 // Tentar conectar ao banco de dados
 prisma.$connect()
