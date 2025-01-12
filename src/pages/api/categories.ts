@@ -1,11 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { executeQuery } from '@/lib/db';
-
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
+import prisma from '@/lib/db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -13,16 +7,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const query = `
-      SELECT id, name, LOWER(name) as slug
-      FROM categories
-      ORDER BY name ASC
-    `;
-    
-    const results = await executeQuery<Category[]>(query, []);
-    
-    // Ensure we always return an array
-    const categories = Array.isArray(results) ? results : [];
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
     
     res.status(200).json(categories);
   } catch (error) {
